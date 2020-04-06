@@ -20,5 +20,16 @@ getUser.catch(function(){
   console.log('Sorry! something is wrong!')
 })
 
+const url = 'https://swapi.co/api/people/1/'
 
+$.ajax(url, {
+  method: 'GET',
+  success: function(data){
+    console.log(data)
+  },
+  error: function(){
+    console.log(error)
+  }
+  
+})
 
