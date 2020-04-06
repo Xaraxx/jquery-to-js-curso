@@ -33,3 +33,13 @@ $.ajax(url, {
   
 })
 
+fetch(url).then(
+  function(response){
+    // console.log(response)
+    return response.json()
+  }).then(function(character){
+    console.log('character', character.name)
+  }).catch(function(){
+    console.log('Sorry! something is wrong!')
+  })
+
