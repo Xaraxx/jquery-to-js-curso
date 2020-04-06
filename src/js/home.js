@@ -41,5 +41,20 @@ fetch(url).then(
     console.log('character', character.name)
   }).catch(function(){
     console.log('Sorry! something is wrong!')
+  });
+
+(async function load(){
+  async function getData(url2){
+    const response = await fetch(url2)
+    const data = await response.json()
+    return data
+  }
+  const actionList = await getData('https://yts.mx/api/v2/list_movies.json?genre=action')
+  let terrorList;
+  getData('https://yts.mx/api/v2/list_movies.json?genre=action')
+  .then(function(data){
+    console.log('terrorlist', data)
   })
+  console.log('actionList', actionList)
+})()
 
