@@ -57,8 +57,8 @@ fetch(url).then(
   // const $home = $('.home .list #item')
 
   const $actionContainer = document.querySelector('#action')
-  const $dramaContainer = document.getElementById('#drama')
-  const $animationContainer = document.getElementById('#animation')
+  const $dramaContainer = document.getElementById('drama')
+  const $animationContainer = document.getElementById('animation')
 
   function videoItemTemplate(movie){
     return(
@@ -73,18 +73,29 @@ fetch(url).then(
       }
   
     // console.log(videoItemTemplate('src/images/covers/bitcoin.jpg', 'bitcoin'))
-  
-
-  actionList.data.movies.forEach((movie) => {
-    const HTMLString = videoItemTemplate(movie)
+  function createTemplate(HTMLString){
     const html = document.implementation.createHTMLDocument();
-
     html.body.innerHTML = HTMLString;
+    return html.body.children[0]
+  }
 
+  function renderMovieList(list, $container){
+    $container.children[0].remove()
+    // actionList.data.movies
+    list.forEach((movie) => {
+      const HTMLString = videoItemTemplate(movie)
+      const movieElement = createTemplate(HTMLString)
+  
+      $container.append(movieElement)
+      
+    })
+  
+  }
 
-    $actionContainer.append(html.body.children[0])
-    console.log(HTMLString)
-  })
+  renderMovieList(actionList.data.movies, $actionContainer)
+  renderMovieList(dramaList.data.movies, $dramaContainer)
+  renderMovieList(animationList.data.movies, $animationContainer)
+  
 
   const $featuringContainer = document.getElementById('#featuring')
   const $form = document.getElementById('#form')
