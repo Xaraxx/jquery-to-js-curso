@@ -7,41 +7,41 @@ function cambiarNombre(nuevoNombre) {
   cambia = nuevoNombre
 }
 
-const getUser = new Promise(function(resolve, reject){
-  setTimeout(resolve, 3000)
-  // resolve()
-})
+// const getUser = new Promise(function(resolve, reject){
+//   setTimeout(resolve, 3000)
+//   // resolve()
+// })
 
-getUser.then(function(){
-  console.log('All is ok!')
-})
+// getUser.then(function(){
+//   console.log('All is ok!')
+// })
 
-getUser.catch(function(){
-  console.log('Sorry! something is wrong!')
-})
+// getUser.catch(function(){
+//   console.log('Sorry! something is wrong!')
+// })
 
-const url = 'https://swapi.co/api/people/1/'
+// const url = 'https://swapi.co/api/people/1/'
 
-$.ajax(url, {
-  method: 'GET',
-  success: function(data){
-    console.log(data)
-  },
-  error: function(){
-    console.log(error)
-  }
+// $.ajax(url, {
+//   method: 'GET',
+//   success: function(data){
+//     console.log(data)
+//   },
+//   error: function(){
+//     console.log(error)
+//   }
   
-})
+// })
 
-fetch(url).then(
-  function(response){
-    // console.log(response)
-    return response.json()
-  }).then(function(character){
-    console.log('character', character.name)
-  }).catch(function(){
-    console.log('Sorry! something is wrong!')
-  });
+// fetch(url).then(
+//   function(response){
+//     // console.log(response)
+//     return response.json()
+//   }).then(function(character){
+//     console.log('character', character.name)
+//   }).catch(function(){
+//     console.log('Sorry! something is wrong!')
+//   });
 
 (async function load(){
   async function getData(url2){
@@ -49,6 +49,15 @@ fetch(url).then(
     const data = await response.json()
     return data
   }
+  const $form = document.getElementById('form')
+  const $home = document.getElementById('home')
+
+  $form.addEventListener('submit', (event) => {
+    event.preventDefault() // => esto es para evitar que el navegador se recarge con cada búsqueda! 
+    
+    $home.classList.toggle('search-active')
+  })
+
   const actionList = await getData('https://yts.mx/api/v2/list_movies.json?genre=action')
   const dramaList = await getData('https://yts.mx/api/v2/list_movies.json?genre=drama')
   const animationList = await getData('https://yts.mx/api/v2/list_movies.json?genre=animation')
@@ -78,6 +87,11 @@ fetch(url).then(
     html.body.innerHTML = HTMLString;
     return html.body.children[0]
   }
+  function addEventClick($element){
+    $element.addEventListener('click', () => {
+      showModal()
+    })
+  }
 
   function renderMovieList(list, $container){
     $container.children[0].remove()
@@ -87,7 +101,7 @@ fetch(url).then(
       const movieElement = createTemplate(HTMLString)
   
       $container.append(movieElement)
-      
+      addEventClick(movieElement)
     })
   
   }
@@ -98,8 +112,7 @@ fetch(url).then(
   
 
   const $featuringContainer = document.getElementById('#featuring')
-  const $form = document.getElementById('#form')
-  const $home = document.getElementById('#home')
+  
 
 
   const $modal = document.getElementById('modal')
@@ -109,6 +122,16 @@ fetch(url).then(
   const $modalImg = $modal.querySelector('img')
   const $modalTitle = $modal.querySelector('h1')
   const $modalDescription = $modal.querySelector('p')
+
+  function showModal(){
+    $overlay.classList.add('active')
+    $modal.style.animation = 'modalIn .8s forwards'
+  }
+  function showModal(){
+    $overlay.classList.remove('active')
+    $modal.style.animation = 'modalIn .8s forwards'
+  }
+  $hideModal.addEventListener('click', hideModal())
 
   // '<div class="primaryPlaylistItem">' +
   //   '<div class="primaryPlaylistItem-image">' +
