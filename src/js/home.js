@@ -44,8 +44,8 @@ function cambiarNombre(nuevoNombre) {
 //   });
 
 (async function load(){
-  async function getData(url2){
-    const response = await fetch(url2)
+  async function getData(url){
+    const response = await fetch(url)
     const data = await response.json()
     return data
   }
@@ -90,15 +90,25 @@ function cambiarNombre(nuevoNombre) {
 
     $featuringContainer.append($loader)
     const data = new FormData($form)
-    const peli = await getData(`${BASE_API}list_movies.json?limit=1&query_term=${data.get('name')}`)
-  
-    const HTMLString = featuringTemplate(peli.data.movies[0])
+    const {
+      data:{
+        movies: pelis
+      } 
+    } = await getData(`${BASE_API}list_movies.json?limit=1&query_term=${data.get('name')}`)
+    // const peli = await getData(`${BASE_API}list_movies.json?limit=1&query_term=${data.get('name')}`)
+    // TODO: include this part in the Start Wars Application
+    const HTMLString = featuringTemplate(pelis[0])
     $featuringContainer.innerHTML = HTMLString
   })
 
-  const actionList = await getData(`${BASE_API}list_movies.json?genre=action`)
-  const dramaList = await getData(`${BASE_API}list_movies.json?genre=drama`)
-  const animationList = await getData(`${BASE_API}list_movies.json?genre=animation`)
+  // const actionList = await getData(`${BASE_API}list_movies.json?genre=action`)
+  // const dramaList = await getData(`${BASE_API}list_movies.json?genre=drama`)
+  // const animationList = await getData(`${BASE_API}list_movies.json?genre=animation`)
+  
+  const {data: { movies: actionList} } = await getData(`${BASE_API}list_movies.json?genre=action`)
+  const {data: { movies: dramaList} } = await getData(`${BASE_API}list_movies.json?genre=drama`)
+  const {data: { movies: animationList }} = await getData(`${BASE_API}list_movies.json?genre=animation`)
+  
   
   console.log(actionList, dramaList, animationList)
   // const $home = $('.home .list #item')
@@ -107,9 +117,9 @@ function cambiarNombre(nuevoNombre) {
   const $dramaContainer = document.getElementById('drama')
   const $animationContainer = document.getElementById('animation')
 
-  function videoItemTemplate(movie){
+  function videoItemTemplate(movie, category){
     return(
-      `<div class="primaryPlaylistItem">
+      `<div class="primaryPlaylistItem" data-id="${movie.id}" data-category="${category}">
           <div class="primaryPlaylistItem-image">
             <img src="${movie.medium_cover_image}">
           </div>
@@ -128,11 +138,11 @@ function cambiarNombre(nuevoNombre) {
 
   function addEventClick($element){
     $element.addEventListener('click', () => {
-      showModal()
+      showModal($element)
     })
   }
 
-  function renderMovieList(list, $container){
+  function renderMovieList(list, $container, category){
     $container.children[0].remove()
     // actionList.data.movies
     list.forEach((movie) => {
@@ -145,9 +155,9 @@ function cambiarNombre(nuevoNombre) {
   
   }
 
-  renderMovieList(actionList.data.movies, $actionContainer)
-  renderMovieList(dramaList.data.movies, $dramaContainer)
-  renderMovieList(animationList.data.movies, $animationContainer)
+  renderMovieList(actionList.data.movies, $actionContainer, 'action')
+  renderMovieList(dramaList.data.movies, $dramaContainer, 'drama')
+  renderMovieList(animationList.data.movies, $animationContainer, 'animation')
   
   
   const $modal = document.getElementById('modal')
@@ -158,9 +168,17 @@ function cambiarNombre(nuevoNombre) {
   const $modalTitle = $modal.querySelector('h1')
   const $modalDescription = $modal.querySelector('p')
 
-  function showModal(){
+  function findMovie(id, category){
+    
+  }
+
+  function showModal($element){
     $overlay.classList.add('active')
     $modal.style.animation = 'modalIn .8s forwards'
+    const id = $element.dataset.id
+    const category = $element.dataset.category
+    const data = findMovie(id, category)
+
   }
 
   $hideModal.addEventListener('click', hideModal)
