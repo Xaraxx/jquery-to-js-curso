@@ -47,7 +47,10 @@ function cambiarNombre(nuevoNombre) {
   async function getData(url){
     const response = await fetch(url)
     const data = await response.json()
-    return data
+    if (data.data.movie_count > 0){
+      return data
+    }
+    throw new Error('No se encontró ningún resultado')
   }
   const $form = document.getElementById('form')
   const $home = document.getElementById('home')
@@ -90,15 +93,23 @@ function cambiarNombre(nuevoNombre) {
 
     $featuringContainer.append($loader)
     const data = new FormData($form)
-    const {
-      data:{
-        movies: pelis
-      } 
-    } = await getData(`${BASE_API}list_movies.json?limit=1&query_term=${data.get('name')}`)
+    try {
+      const {
+        data:{
+          movies: pelis
+        } 
+      } = await getData(`${BASE_API}list_movies.json?limit=1&query_term=${data.get('name')}`)
+      const HTMLString = featuringTemplate(pelis[0])
+      $featuringContainer.innerHTML = HTMLString
+    } catch(error){
+      alert(error.message)
+      $loader.remove()
+      $home.classList.remove('search-active')
+    }
+    
     // const peli = await getData(`${BASE_API}list_movies.json?limit=1&query_term=${data.get('name')}`)
     // TODO: include this part in the Start Wars Application
-    const HTMLString = featuringTemplate(pelis[0])
-    $featuringContainer.innerHTML = HTMLString
+    
   })
 
   // const actionList = await getData(`${BASE_API}list_movies.json?genre=action`)
