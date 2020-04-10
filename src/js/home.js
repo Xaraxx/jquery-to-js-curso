@@ -105,12 +105,6 @@ function cambiarNombre(nuevoNombre) {
   // const dramaList = await getData(`${BASE_API}list_movies.json?genre=drama`)
   // const animationList = await getData(`${BASE_API}list_movies.json?genre=animation`)
   
-  const {data: { movies: actionList} } = await getData(`${BASE_API}list_movies.json?genre=action`)
-  const {data: { movies: dramaList} }  = await getData(`${BASE_API}list_movies.json?genre=drama`)
-  const {data: { movies: animationList }} = await getData(`${BASE_API}list_movies.json?genre=animation`)
-  
-  
-  console.log(actionList, dramaList, animationList)
   // const $home = $('.home .list #item')
 
   const $actionContainer = document.querySelector('#action')
@@ -146,19 +140,29 @@ function cambiarNombre(nuevoNombre) {
     $container.children[0].remove()
     // actionList.data.movies
     list.forEach((movie) => {
-      const HTMLString = videoItemTemplate(movie)
+      const HTMLString = videoItemTemplate(movie, category)
       const movieElement = createTemplate(HTMLString)
-  
       $container.append(movieElement)
+      const image = movieElement.querySelector('img')
+      image.addEventListener('load', (event) =>{
+        event.srcElement.classList.add('fadeIn')
+      })
+      
       addEventClick(movieElement)
     })
   
   }
 
+  const {data: { movies: actionList} } = await getData(`${BASE_API}list_movies.json?genre=action`)
   renderMovieList(actionList, $actionContainer, 'action')
+  
+  const {data: { movies: dramaList} }  = await getData(`${BASE_API}list_movies.json?genre=drama`)
   renderMovieList(dramaList, $dramaContainer, 'drama')
+
+  const {data: { movies: animationList }} = await getData(`${BASE_API}list_movies.json?genre=animation`)
   renderMovieList(animationList, $animationContainer, 'animation')
   
+  console.log(actionList, dramaList, animationList)
   
   const $modal = document.getElementById('modal')
   const $overlay = document.getElementById('overlay')
@@ -168,11 +172,22 @@ function cambiarNombre(nuevoNombre) {
   const $modalTitle = $modal.querySelector('h1')
   const $modalDescription = $modal.querySelector('p')
 
+  function findById(list, id){
+    return list.find((movie) => movie.id === parseInt(id, 10))
+  }
+
   function findMovie(id, category){
-    actionList.find((movie) => {
-      return movie.id === parseInt(id)
-      
-    })
+    switch (category) {
+      case 'action':{
+        return findById(actionList, id)
+      }
+      case 'drama':{
+        return findById(dramaList, id)
+      }
+      default: {
+        return findById(animationList, id)       
+      }
+    }
   }
 
   function showModal($element){
@@ -180,8 +195,12 @@ function cambiarNombre(nuevoNombre) {
     $modal.style.animation = 'modalIn .8s forwards'
     const id = $element.dataset.id
     const category = $element.dataset.category
-    const data = findMovie(id, category)
 
+    const dataMovie = findMovie(id, category)
+    
+    $modalImg.setAttribute('src', dataMovie.medium_cover_image) 
+    $modalTitle.textContent = dataMovie.title
+    $modalDescription.textContent = dataMovie.description_full
   }
 
   $hideModal.addEventListener('click', hideModal)
