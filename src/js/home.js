@@ -106,7 +106,7 @@ function cambiarNombre(nuevoNombre) {
   // const animationList = await getData(`${BASE_API}list_movies.json?genre=animation`)
   
   const {data: { movies: actionList} } = await getData(`${BASE_API}list_movies.json?genre=action`)
-  const {data: { movies: dramaList} } = await getData(`${BASE_API}list_movies.json?genre=drama`)
+  const {data: { movies: dramaList} }  = await getData(`${BASE_API}list_movies.json?genre=drama`)
   const {data: { movies: animationList }} = await getData(`${BASE_API}list_movies.json?genre=animation`)
   
   
@@ -155,9 +155,9 @@ function cambiarNombre(nuevoNombre) {
   
   }
 
-  renderMovieList(actionList.data.movies, $actionContainer, 'action')
-  renderMovieList(dramaList.data.movies, $dramaContainer, 'drama')
-  renderMovieList(animationList.data.movies, $animationContainer, 'animation')
+  renderMovieList(actionList, $actionContainer, 'action')
+  renderMovieList(dramaList, $dramaContainer, 'drama')
+  renderMovieList(animationList, $animationContainer, 'animation')
   
   
   const $modal = document.getElementById('modal')
@@ -169,7 +169,10 @@ function cambiarNombre(nuevoNombre) {
   const $modalDescription = $modal.querySelector('p')
 
   function findMovie(id, category){
-    
+    actionList.find((movie) => {
+      return movie.id === parseInt(id)
+      
+    })
   }
 
   function showModal($element){
