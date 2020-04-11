@@ -164,13 +164,26 @@ function cambiarNombre(nuevoNombre) {
   
   }
 
-  const {data: { movies: actionList} } = await getData(`${BASE_API}list_movies.json?genre=action`)
+  async function cacheExist(category){
+    const listName = `${category}List`
+    const cacheList = window.localStorage.getItem(listName)
+    
+    if (cacheList) {
+      return JSON.parse(cacheList)
+    }
+    const {data: { movies: data} } = await getData(`${BASE_API}list_movies.json?genre=${category}`)
+    window.localStorage.setItem(listName, JSON.stringify(data))
+    
+    return data
+  }
+
+  const actionList = await cacheExist('action')
   renderMovieList(actionList, $actionContainer, 'action')
   
-  const {data: { movies: dramaList} }  = await getData(`${BASE_API}list_movies.json?genre=drama`)
+  const dramaList = await cacheExist('drama')
   renderMovieList(dramaList, $dramaContainer, 'drama')
 
-  const {data: { movies: animationList }} = await getData(`${BASE_API}list_movies.json?genre=animation`)
+  const animationList = await cacheExist('animation')
   renderMovieList(animationList, $animationContainer, 'animation')
   
   console.log(actionList, dramaList, animationList)
@@ -220,17 +233,18 @@ function cambiarNombre(nuevoNombre) {
     $modal.style.animation = 'modalOut .8s forwards'
   }
 
-  
+})();
 
-  // '<div class="primaryPlaylistItem">' +
-  //   '<div class="primaryPlaylistItem-image">' +
-  //     '<img src="src/images/covers/midnight.jpg">' +
-  //   '</div>' +
-  //   '<h4 class="primaryPlaylistItem-title">' +
-  //    ' Titulo de la peli' +
-  //   '</h4>' +
-  // '</div>'
+(async function loadRandomUsers(){
+  async function getUserData(url){
+    const response = await fetch(url)
+    const userData = await response.json()
+    console.log(userData)
+    return userData
+    
+  }
 
+  // const url  
+  const users = await getUserData('https://randomuser.me/api/')
 })()
-
 
